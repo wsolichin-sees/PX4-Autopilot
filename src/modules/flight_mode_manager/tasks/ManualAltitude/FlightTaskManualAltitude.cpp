@@ -82,7 +82,7 @@ void FlightTaskManualAltitude::_updateConstraintsFromEstimator()
 	}
 
 	if (!PX4_ISFINITE(_max_distance_to_ground) && PX4_ISFINITE(_sub_vehicle_local_position.get().hagl_max_z)) {
-		_max_distance_to_ground = _sub_vehicle_local_position.get().hagl_max_z;
+		_max_distance_to_ground = _haglMaxZWithMargin(_sub_vehicle_local_position.get().hagl_max_z);
 	}
 }
 

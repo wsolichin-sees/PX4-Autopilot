@@ -41,6 +41,7 @@
 
 #include <lib/stick_yaw/StickYaw.hpp>
 #include <lib/sticks/Sticks.hpp>
+#include <mathlib/mathlib.h>
 #include "FlightTask.hpp"
 #include "StickTiltXY.hpp"
 #include <uORB/Subscription.hpp>
@@ -65,6 +66,29 @@ protected:
 	virtual void _scaleSticks(); /**< scales sticks to velocity in z */
 	bool _checkTakeoff() override;
 	void _updateConstraintsFromEstimator();
+
+	static constexpr float kHaglMaxMarginFraction = 0.1f; /**< fraction of the reported maximum height above ground kept as margin */
+
+	/**
+	 * Apply a margin to the maximum height above ground for z-control reported by the estimator.
+	 * @param hagl_max_z maximum height above ground for z-control reported by the estimator [m]
+	 * @return height above ground the controller limits itself to [m]
+	 */
+	static float _haglMaxZWithMargin(const float hagl_max_z)
+	{
+		return (1.f - kHaglMaxMarginFraction) * hagl_max_z;
+	}
+
+	/**
+	 * Apply margin to the maximum height above ground reported by the estimator for xy-control.
+	 * @param hagl_max_xy maximum height above ground for xy-control reported by the estimator [m]
+	 * @return height above ground the controller limits itself to [m]
+	 */
+	static float _haglMaxXYWithMargin(const float hagl_max_xy)
+	{
+		static constexpr float margin_max = 1.f; // upper bound of the margin [m]
+		return hagl_max_xy - math::min(kHaglMaxMarginFraction * hagl_max_xy, margin_max);
+	}
 
 	/**
 	 *  Check and sets for position lock.
