@@ -381,7 +381,6 @@ void Ekf::get_ekf_ctrl_limits(float *vxy_max, float *vz_max, float *hagl_min, fl
 
 		// Allow ground relative velocity to use 50% of available flow sensor range to allow for angular motion
 		float flow_vxy_max = 0.5f * _flow_max_rate * flow_constrained_height;
-		flow_hagl_max = math::max(flow_hagl_max * 0.9f, flow_hagl_max - 1.0f);
 
 		*vxy_max = flow_vxy_max;
 		*hagl_min = flow_hagl_min;
